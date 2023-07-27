@@ -141,7 +141,7 @@ def generate_azure(text, sentiment):
         # see https://learn.microsoft.com/en-us/azure/cognitive-services/openai/quickstart?pivots=programming-language-python
         try:
             response = requests.post(
-                "https://oa-geba-sus.openai.azure.com/openai/deployments/tweeter/completions?api-version=2022-12-01",
+                "https://oai-tweet-aca-app.openai.azure.com/openai/deployments/tweeter/completions?api-version=2022-12-01",
                 json=payload,
                 headers={
                     "api-key": azure_api_key,

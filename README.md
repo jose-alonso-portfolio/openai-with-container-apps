@@ -29,9 +29,13 @@ docker push <dockerhub-username>/openaiui:latest
 cd ../openai
 docker build -t <dockerhub-username>/openaiapi:latest .
 docker push <dockerhub-username>/openaiapi:latest
+
+cd ../bot
+docker build -t <dockerhub-username>/openaibot:latest .
+docker push <dockerhub-username>/openaibot:latest
 ```
 
-In `main.bicep`, find the references to the container images and replace them with the Docker Hub images. For example, for the UI, replace `${acr.properties.loginServer}/openaiui:latest` with `<dockerhub-username>/openaiui:latest`. Do the same for the API.
+In `main.bicep`, find the references to the container images and replace them with the Docker Hub images. For example, for the UI, replace `${acr.properties.loginServer}/openaiui:latest` with `<dockerhub-username>/openaiui:latest`. Do the same for the API and bot.
 
 ## Deploy Azure OpenAI
 
@@ -64,12 +68,13 @@ If you cannot get access to Azure OpenAI, get an account at OpenAI and create yo
 
 ## Deploy infrastructure
 
-Use Bicep to deploy the infrastructure. From the root of this repo, run the following commands:
+Use Bicep to deploy the infrastructure. From the root of this repo, run the following commands on bash or PowerShell:
 
 ```bash
 RG=rg-aca-openai
 LOCATION=westeurope
-PREFIX=ai
+PREFIX="add your prefix here"
+DOCKER_USER_NAME="Your docker user name"
 AZURE_OPENAI_KEY="Your Azure OpenAI API key"
 OPENAI_KEY="Your OpenAI API key"
 
@@ -77,10 +82,28 @@ az group create --name $RG --location $LOCATION
 
 az deployment group create -g $RG -f ./deploy/main.bicep \
     --parameters parPrefix=$PREFIX \
+    --parameters dockerUserName=$DOCKER_USER_NAME \
     --parameters parLocation=$LOCATION \
     --parameters parAzureApiKey=$AZURE_OPENAI_KEY \
     --parameters parOpenAiApiKey=$OPENAI_KEY
 ```
+
+```powershell
+$RG="tweet-gen-app-ai"
+$LOCATION="uksouth"
+$DOCKER_USER_NAME="Your Docker user name"
+$PREFIX="add your prefix here"
+$AZURE_OPENAI_KEY="c5e7427ca85b46d3bf2c1e6ffc338e1a"
+$OPENAI_KEY="Your OpenAI API key"
+
+az deployment group create -g $RG -f ./deploy/firstDeployment.bicep `
+    --parameters parPrefix=$PREFIX `
+    --parameters parLocation=$LOCATION `
+    --parameters dockerUserName=$DOCKER_USER_NAME `
+    --parameters parAzureApiKey=$AZURE_OPENAI_KEY `
+    --parameters parOpenAiApiKey=$OPENAI_KEY
+```
+
 
 Note that the API can use either the OpenAI API or the Azure OpenAI API. In the deployment of the API, the `TYPE` environment variable can be set to `Azure` to use Azure OpenAI. In that case you need the Azure OpenAI API key. The other key can be left empty. If you set `TYPE` to `OpenAI`, you need the OpenAI API key.
 
