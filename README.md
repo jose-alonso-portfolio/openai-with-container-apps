@@ -35,6 +35,25 @@ docker build -t <dockerhub-username>/openaibot:latest .
 docker push <dockerhub-username>/openaibot:latest
 ```
 
+```powershell
+# login to Docker Hub
+docker login
+
+cd webui
+docker build -t <dockerhub-username>/openaiui:latest .
+docker push <dockerhub-username>/openaiui:latest
+
+cd ..
+cd openai
+docker build -t <dockerhub-username>/openaiapi:latest .
+docker push <dockerhub-username>/openaiapi:latest
+
+cd ..
+cd bot
+docker build -t <dockerhub-username>/openaibot:latest .
+docker push <dockerhub-username>/openaibot:latest
+```
+
 In `main.bicep`, find the references to the container images and replace them with the Docker Hub images. For example, for the UI, replace `${acr.properties.loginServer}/openaiui:latest` with `<dockerhub-username>/openaiui:latest`. Do the same for the API and bot.
 
 ## Deploy Azure OpenAI
